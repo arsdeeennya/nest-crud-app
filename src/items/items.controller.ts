@@ -7,7 +7,7 @@ import { ItemStatus } from './item-status.enum';
 export class ItemsController {
   constructor(private readonly itemService: ItemsService) {}
   @Get()
-  findAll() {
+  findAll(): Item[] {
     return this.itemService.findAll();
   }
 
