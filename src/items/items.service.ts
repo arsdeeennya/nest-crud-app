@@ -4,7 +4,7 @@ import { ItemStatus } from './item-status.enum';
 import { CreateItemDto } from './dto/create-item.dto';
 import { v4 } from 'uuid';
 
-@Injectable()
+@Injectable() // nest knows that this class is provider
 export class ItemsService {
   private items: Item[] = [];
 
