@@ -17,22 +17,22 @@ export class ItemsController {
   constructor(private readonly itemService: ItemsService) {}
 
   @Get()
-  findAll(): Item[] {
+  findAll(): Promise<Item[]> {
     return this.itemService.findAll();
   }
 
   @Get(':id') // /items/id
-  findById(@Param('id', ParseUUIDPipe) id: string): Item {
-    return this.itemService.findById(id);
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Item> {
+    return this.itemService.findOne(id);
   }
 
   @Post()
-  create(@Body() CreateItemDto: CreateItemDto): Item {
+  create(@Body() CreateItemDto: CreateItemDto): Promise<Item> {
     return this.itemService.create(CreateItemDto);
   }
 
   @Patch(':id')
-  updateStatus(@Param('id', ParseUUIDPipe) id: string): Item {
+  updateStatus(@Param('id', ParseUUIDPipe) id: string): Promise<Item> {
     return this.itemService.updateStatus(id);
   }
 

@@ -1,40 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Item } from './item.model';
 import { ItemStatus } from './item-status.enum';
 import { CreateItemDto } from './dto/create-item.dto';
 import { v4 } from 'uuid';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Item, ItemDocument } from './schemas/item.schema';
 
 @Injectable() // nest knows that this class is provider
 export class ItemsService {
-  private items: Item[] = [];
+  constructor(
+    @InjectModel(Item.name) private readonly itemModel: Model<ItemDocument>,
+  ) {}
 
-  findAll(): Item[] {
-    return this.items;
+  async findAll(): Promise<Item[]> {
+    return this.itemModel.find().exec();
   }
 
-  findById(id: string): Item {
-    const found = this.items.find((item) => item.id === id);
-    if (!found) throw new NotFoundException();
-    return found;
+  async findOne(id: string): Promise<Item> {
+    const item = await this.itemModel.findOne({ id }).exec();
+    if (!item) throw new NotFoundException('could not find item');
+    return item;
   }
 
-  create(CreateItemDto: CreateItemDto): Item {
-    const item: Item = {
+  async create(CreateItemDto: CreateItemDto): Promise<Item> {
+    const createdUser = new this.itemModel({
       id: v4(),
-      ...CreateItemDto,
+      name: CreateItemDto.name,
+      price: CreateItemDto.price,
+      description: CreateItemDto.description,
       status: ItemStatus.ON_SALE,
-    };
-    this.items.push(item);
-    return item;
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+    return createdUser.save();
   }
 
-  updateStatus(id: string): Item {
-    const item = this.findById(id);
+  async updateStatus(id: string): Promise<Item> {
+    const item = await this.itemModel.findOne({ id }).exec();
+    if (!item) throw new NotFoundException('could not find item');
     item.status = ItemStatus.SOLD_OUT;
-    return item;
+    return item.save();
   }
 
-  delete(id: string): void {
-    this.items = this.items.filter((item) => item.id !== id);
+  async delete(id: string): Promise<void> {
+    await this.itemModel.deleteOne({ id }).exec();
   }
 }
