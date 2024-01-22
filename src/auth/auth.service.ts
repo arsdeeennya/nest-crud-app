@@ -11,7 +11,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser({ username, password }: CreateUserDto) {
+  async validateUser({ username, password }: CreateUserDto): Promise<true> {
     const user = await this.usersService.findOne(username);
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {

@@ -4,11 +4,13 @@ import {
   Get,
   Param,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { User } from 'src/users/schemas/user.schema';
 import { UsersService } from './user.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UsersController {
@@ -18,7 +20,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
   @Get(':username')
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('username') username: string) {
     return this.usersService.findOne(username);
   }
