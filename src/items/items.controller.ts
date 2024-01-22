@@ -9,8 +9,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
-import { Item } from './item.model';
 import { CreateItemDto } from './dto/create-item.dto';
+import { Item } from './schemas/item.schema';
 
 @Controller('items')
 export class ItemsController {
